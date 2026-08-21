@@ -159,7 +159,8 @@
     background:var(--panel);color:var(--cyan);font-size:20px;cursor:pointer;line-height:1;transition:.2s;
     font-family:var(--font-num);backdrop-filter:blur(6px);box-shadow:0 4px 14px rgba(0,0,0,.4)}
   .map-ctrl button:hover{background:rgba(0,120,232,.45);box-shadow:0 0 14px rgba(0,160,255,.5)}
-  .map-legend{position:absolute;left:410px;bottom:296px;display:flex;gap:14px;font-size:11.5px;color:var(--text-dim);
+  /* 图例贴近底部 CUPPS/CUSS 卡片，间距与卡片间间距一致（12px） */
+  .map-legend{position:absolute;left:410px;bottom:242px;display:flex;gap:14px;font-size:11.5px;color:var(--text-dim);
     background:var(--panel);padding:6px 13px;border-radius:8px;border:1px solid var(--border);z-index:20;backdrop-filter:blur(6px)}
   .map-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
 

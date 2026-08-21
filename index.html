@@ -78,7 +78,7 @@
       linear-gradient(90deg, rgba(3,7,20,.93) 0%, rgba(3,7,20,.85) 14%, rgba(3,7,20,.55) 18%, transparent 21.5%),
       linear-gradient(270deg, rgba(3,7,20,.93) 0%, rgba(3,7,20,.85) 14%, rgba(3,7,20,.55) 18%, transparent 21.5%),
       linear-gradient(180deg, rgba(3,7,20,.85) 0%, rgba(3,7,20,.6) 5%, rgba(3,7,20,.35) 9%, transparent 13.5%),
-      linear-gradient(0deg, rgba(3,7,20,.9) 0%, rgba(3,7,20,.75) 10%, rgba(3,7,20,.45) 21%, transparent 26%)}
+      linear-gradient(0deg, rgba(3,7,20,.9) 0%, rgba(3,7,20,.75) 10%, rgba(3,7,20,.45) 18%, transparent 22%)}
 
   /* ===== 顶部 ===== */
   .header{position:absolute;top:0;left:0;right:0;height:70px;z-index:30;
@@ -307,9 +307,10 @@
   /* 右2 使用统计（大图） */
   .usage-wrap{width:100%;height:100%;position:relative}
   #usageChart{width:100%;height:100%}
+  #allChart{width:100%;height:100%}
 
-  /* 底部 CUPPS/CUSS 合并下钻卡片 */
-  .status-strip{position:absolute;left:410px;right:410px;bottom:14px;height:272px;z-index:18;
+  /* 底部 CUPPS/CUSS 合并下钻卡片（压缩高度，给地图更多空间） */
+  .status-strip{position:absolute;left:410px;right:410px;bottom:14px;height:216px;z-index:18;
     display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .strip-panel{position:relative;background:var(--panel);backdrop-filter:blur(10px);
     border:1px solid var(--border);border-radius:12px;padding:8px 14px;overflow:hidden;display:flex;flex-direction:column;
@@ -330,11 +331,12 @@
   .sp-rate-bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#0078e8,#00a0ff);transition:width .8s}
   .sp-rate b{font-family:var(--font-num);font-size:13px;color:var(--cyan);flex-shrink:0}
   .sp-main{display:flex;gap:14px;flex-shrink:0;margin-bottom:6px}
-  .sp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;flex-shrink:0;margin-bottom:5px}
-  .ss-item{background:rgba(10,26,58,.6);border:1px solid rgba(28,58,110,.5);border-radius:8px;
-    padding:5px 4px;text-align:center}
-  .ss-item b{font-family:var(--font-num);font-size:17px;font-weight:bold;color:#fff;display:block;line-height:1.2}
-  .ss-item span{font-size:9.5px;color:var(--text-dim)}
+  /* 统计项：左右排列（标签 + 数量横排），压缩纵向空间 */
+  .sp-stats{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-bottom:5px;flex-wrap:nowrap}
+  .ss-item{display:flex;align-items:baseline;gap:5px;padding:3px 9px;border-radius:7px;
+    background:rgba(10,26,58,.6);border:1px solid rgba(28,58,110,.5);white-space:nowrap}
+  .ss-item b{font-family:var(--font-num);font-size:15px;font-weight:bold;color:#fff;line-height:1.2}
+  .ss-item span{font-size:10px;color:var(--text-dim)}
   .ss-item.on b{color:var(--green)}
   .ss-item.fault b{color:var(--red)}
   .ss-item.off b{color:var(--gray)}

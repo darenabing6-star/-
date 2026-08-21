@@ -578,11 +578,20 @@
       </div>
     </div>
 
-    <div class="panel" style="flex:1;min-height:0">
+    <div class="panel" style="flex:1.25;min-height:0">
       <div class="panel-title"><span class="ic"></span>设备使用统计 · 型号分布 <span class="extra" id="usageSiteName">--</span></div>
       <div class="panel-body" style="padding:2px 6px 6px">
         <div class="usage-wrap">
           <div id="usageChart"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="flex:1;min-height:0">
+      <div class="panel-title"><span class="ic"></span>全站设备统计 <span class="extra">全部站点 · 设备类型分布</span></div>
+      <div class="panel-body" style="padding:2px 6px 6px">
+        <div class="usage-wrap">
+          <div id="allChart"></div>
         </div>
       </div>
     </div>
@@ -862,7 +871,7 @@ let mapInited = false;
 const $ = id => document.getElementById(id);
 
 /* ================= 地图（实时 ECharts 底图 + DOM 散点） ================= */
-let usageChart, mapChart;
+let usageChart, mapChart, allChart;
 const MAP_BOUND = { west: 50, east: 152, north: 62, south: -16 };
 const MAP_CENTER = [104, 28];
 const CN_MAP = {
@@ -1304,6 +1313,7 @@ function refreshAll(){
 
   renderDevicePanel(de);
   renderUsageChart();
+  renderAllDeviceChart();
 }
 
 /* ===== CUPPS 工作站 / CUSS 柜机：精致图标网格（数量自适应尺寸） ===== */
@@ -1483,7 +1493,28 @@ function renderUsageChart(){
   }, true);
 }
 
-/* ================= 时钟 ================= */
+/* ===== 全站设备统计：全部站点设备类型分布（柱状图） ===== */
+function renderAllDeviceChart(){
+  if (!allChart) return;
+  const agg = {};
+  SNAPSHOT.passengers.forEach(p => {
+    const m = SNAPSHOT.deviceTypes[p.iataCode] || {};
+    Object.keys(m).forEach(code => { agg[code] = (agg[code] || 0) + m[code]; });
+  });
+  const entries = Object.entries(agg).sort((a, b) => b[1] - a[1]);
+  allChart.setOption({
+    grid:{ left: 74, right: 34, top: 8, bottom: 4, containLabel: false },
+    tooltip:{ trigger:'axis', axisPointer:{ type:'shadow' }, backgroundColor:'rgba(6,16,38,.95)', borderColor:'#2a6fdb', textStyle:{ color:'#fff', fontSize:12 },
+      formatter: p => (p[0] ? p[0].name.replace(/\([^)]*\)/g, '') + '：<b style=\"color:#00a0ff\">' + p[0].value + '</b> 台' : '') },
+    xAxis:{ type:'value', axisLabel:{ color:'#8fa3cc', fontSize:10 }, splitLine:{ lineStyle:{ color:'rgba(0,160,255,.12)' } } },
+    yAxis:{ type:'category', data: entries.map(e => devName(e[0]) + ' (' + e[0] + ')'),
+      axisLabel:{ color:'#cfe0ff', fontSize:10 }, axisLine:{ lineStyle:{ color:'rgba(0,160,255,.3)' } } },
+    series:[{ type:'bar', data: entries.map(e => e[1]), barWidth: 11,
+      itemStyle:{ borderRadius:[0,5,5,0],
+        color:{ type:'linear', x:0, y:0, x2:1, y2:0, colorStops:[{offset:0,color:'#0078e8'},{offset:1,color:'#00a0ff'}] } } }]
+  }, true);
+}
+
 function tickClock(){
   const d = new Date();
   const pad = n => String(n).padStart(2,'0');
@@ -1614,6 +1645,7 @@ initMap();
 updateMapPoints();
 buildSiteButtons();
 usageChart = echarts.init($('usageChart'));
+allChart = echarts.init($('allChart'));
 renderGlobal();
 refreshAll();
 setMode('demo');

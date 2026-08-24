@@ -217,7 +217,12 @@
   .st-row .st-name{font-size:11.5px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .st-row .st-num{font-family:var(--font-num);font-size:14.5px;font-weight:bold;color:#fff;text-align:right}
   .st-row .st-num.dim{color:var(--text-dim);font-weight:normal;font-size:12.5px}
-  .st-row .st-hd{font-size:10px;color:var(--gray2);text-align:right}
+  .st-row .st-hd{font-size:10px;color:var(--gray2);text-align:right;white-space:nowrap}
+  /* 航班明细行：4 列定宽，标题/日期不换行 */
+  .st-row.flight{grid-template-columns:76px 116px 64px 64px}
+  .st-row.flight .st-code{font-size:13px}
+  .st-row.flight .st-name{white-space:nowrap;overflow:visible;color:#dce6ff}
+  .st-row.flight .st-num{font-size:13px}
   .st-legend{display:flex;gap:14px;font-size:11px;color:var(--text-dim);margin-top:7px;padding:0 2px}
   .st-legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 
@@ -230,7 +235,7 @@
   .fs-box.u .fs-v{color:var(--red)}
   .fs-box.r{border-color:rgba(53,224,143,.4);background:rgba(53,224,143,.08)}
   .fs-box.r .fs-v{color:var(--green)}
-  .flight-viewport{flex:1;min-height:0;overflow:hidden;position:relative}
+  .flight-viewport{flex:1;min-height:0;overflow-y:auto;position:relative}
   .flight-list{display:flex;flex-direction:column;gap:6px;transition:transform .7s cubic-bezier(.4,0,.2,1)}
   .flight-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;
     background:rgba(10,26,58,.6);border:1px solid rgba(28,58,110,.5);flex-shrink:0}
@@ -860,6 +865,22 @@ function seedDemoHardware(){
       });
     }
   });
+
+  // 航站楼设备：由硬件数据推导，确保每个站点都有航站楼编号（单航站楼显示 T1 而非"全站"）
+  SNAPSHOT.terminals = {};
+  SNAPSHOT.passengers.forEach(p => {
+    const src = SNAPSHOT.hardware.cupps[p.iataCode] || {};
+    const terms = [];
+    Object.keys(src).forEach(term => {
+      let total = 0, on = 0, fault = 0, off = 0;
+      (src[term] || []).forEach(ws => {
+        total += (ws.on || 0) + (ws.fault || 0) + (ws.off || 0);
+        on += ws.on || 0; fault += ws.fault || 0; off += ws.off || 0;
+      });
+      terms.push({ term, total, on, fault, off });
+    });
+    SNAPSHOT.terminals[p.iataCode] = terms;
+  });
 }
 /* ================= 状态管理 ================= */
 let currentSite = 'CAN';
@@ -1381,9 +1402,9 @@ function renderSiteTable(){
   const wrap = $('siteTable');
   wrap.innerHTML = '';
   const flights = SNAPSHOT.siteFlights[currentSite] || [];
-  const rows = [`\n    <div class=\"st-row\" style=\"cursor:default;background:transparent;border-color:transparent;padding:3px 10px\">\n      <span class=\"st-hd\">航班号</span><span class=\"st-hd c\">起飞时间</span>\n      <span class=\"st-hd\">已值机</span><span class=\"st-hd\">订座</span>\n    </div>`];
+  const rows = [`\n    <div class=\"st-row flight\" style=\"cursor:default;background:transparent;border-color:transparent;padding:3px 10px\">\n      <span class=\"st-hd\">航班号</span><span class=\"st-hd c\">起飞时间</span>\n      <span class=\"st-hd\">已值机</span><span class=\"st-hd\">订座</span>\n    </div>`];
   flights.forEach(f => {
-    rows.push(`\n      <div class=\"st-row\">\n        <span class=\"st-code\"><span class=\"dot\" style=\"background:#00a0ff\"></span>${f.flightNo}</span>\n        <span class=\"st-name\">${f.plan}</span>\n        <span class=\"st-num\">${fmtNum(f.checkin)}</span>\n        <span class=\"st-num dim\">${fmtNum(f.booking)}</span>\n      </div>`);
+    rows.push(`\n      <div class=\"st-row flight\">\n        <span class=\"st-code\"><span class=\"dot\" style=\"background:#00a0ff\"></span>${f.flightNo}</span>\n        <span class=\"st-name\">${f.plan}</span>\n        <span class=\"st-num\">${fmtNum(f.checkin)}</span>\n        <span class=\"st-num dim\">${fmtNum(f.booking)}</span>\n      </div>`);
   });
   wrap.innerHTML = rows.join('') || '<div class=\"flight-empty\">暂无航班数据</div>';
   $('siteTableCount').textContent = '共 ' + flights.length + ' 班';
@@ -1392,8 +1413,16 @@ let flightOffset = 0;
 function renderFlights(){
   const list = $('flightList');
   list.innerHTML = '';
-  // 只展示当前站点的异常航班
-  const flights = [...SNAPSHOT.abnormalFlights].filter(f => f.dep === currentSite || f.arr === currentSite);
+  // 只展示当前站点的异常航班；按（日期、出发站、到达站、航班号）去重，每个唯一航班只展示一条
+  const seen = new Set();
+  const flights = [...SNAPSHOT.abnormalFlights]
+    .filter(f => f.dep === currentSite || f.arr === currentSite)
+    .filter(f => {
+      const key = f.plan + '|' + f.dep + '|' + f.arr + '|' + f.flightNo;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   const nU = flights.filter(f => f.type === 'U').length;
   const nR = flights.filter(f => f.type === 'R').length;
   $('fsU').textContent = nU; $('fsR').textContent = nR;
@@ -1408,10 +1437,11 @@ function renderFlights(){
       </div>
       <div class="f-type ${f.type}">${f.typeName}</div>
     </div>`).join('');
-  list.innerHTML = html + html;
+  // 单份展示（不再双份滚动），数量与列表一一对应
+  list.innerHTML = html;
   flightOffset = 0;
   list.style.transform = 'translateY(0)';
-  startFlightScroll();
+  stopFlightScroll();
 }
 function startFlightScroll(){
   stopFlightScroll();

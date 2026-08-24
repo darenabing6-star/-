@@ -577,10 +577,9 @@
       </div>
       <div class="sp-stats">
         <span class="ss-item total">工作站 <b id="cupWs">--</b></span>
-        <span class="ss-item total2">设备 <b id="cupDevTotal">--</b></span>
-        <span class="ss-item on">在线 <b id="cupDevOn">--</b></span>
-        <span class="ss-item fault">故障 <b id="cupDevFault">--</b></span>
-        <span class="ss-item off">离线 <b id="cupDevOff">--</b></span>
+        <span class="ss-item on">在线 <b id="cupOn">--</b></span>
+        <span class="ss-item fault">故障 <b id="cupFault">--</b></span>
+        <span class="ss-item off">离线 <b id="cupOff">--</b></span>
         <span class="ss-item rate">在线率 <b id="cupRateVal">--</b></span>
       </div>
       <div class="sp-main">
@@ -1313,26 +1312,20 @@ function termBarsHtml(groups){
   }).join('');
 }
 function renderCupDrill(){
-  const ws  = aggWs(SNAPSHOT.hardware.cupps[currentSite], false);   // 工作站状态
-  const dev = aggWs(SNAPSHOT.hardware.cupps[currentSite], true);    // 关联设备状态
+  // 只保留工作站维度
+  const ws = aggWs(SNAPSHOT.hardware.cupps[currentSite], false);
   $('cupWs').textContent = ws.total;
-  $('cupDevTotal').textContent = dev.total;
-  $('cupDevOn').textContent = dev.on;
-  $('cupDevFault').textContent = dev.fault;
-  $('cupDevOff').textContent = dev.off;
-  $('cupRateVal').textContent = dev.total ? Math.round(dev.on / dev.total * 100) + '%' : '--';
+  $('cupOn').textContent = ws.on;
+  $('cupFault').textContent = ws.fault;
+  $('cupOff').textContent = ws.off;
+  $('cupRateVal').textContent = ws.total ? Math.round(ws.on / ws.total * 100) + '%' : '--';
   $('cupDonutNum').textContent = ws.total;
   renderDonut(cupDonut, ws.total, ws.on, ws.fault, ws.off);
-  // 每个航站楼：上行为工作站堆叠条，下行为设备堆叠条
-  const html = ws.terms.map((t, i) => {
-    const d = dev.terms[i] || { on: 0, fault: 0, off: 0 };
-    return '<div class=\"tb-group\"><div class=\"tb-title\">' + t.term + ' 航站楼</div>' +
-      termBarsHtml([
-        { label: '站', on: t.on, fault: t.fault, off: t.off },
-        { label: '备', on: d.on, fault: d.fault, off: d.off }
-      ]) + '</div>';
-  }).join('');
-  $('cupTerms').innerHTML = html || '<div class=\"tb-title\" style=\"color:#94a3b8\">暂无工作站数据</div>';
+  // 每个航站楼一行工作站堆叠条
+  $('cupTerms').innerHTML = ws.terms.map(t =>
+    '<div class=\"tb-group\"><div class=\"tb-title\">' + t.term + ' 航站楼</div>' +
+    termBarsHtml([{ label: '站', on: t.on, fault: t.fault, off: t.off }]) + '</div>'
+  ).join('') || '<div class=\"tb-title\" style=\"color:#94a3b8\">暂无工作站数据</div>';
 }
 function renderCusDrill(){
   const kt = aggWs(SNAPSHOT.hardware.cuss && SNAPSHOT.hardware.cuss[currentSite], false);  // 只关注柜机

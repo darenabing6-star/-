@@ -1416,10 +1416,10 @@ let flightOffset = 0;
 function renderFlights(){
   const list = $('flightList');
   list.innerHTML = '';
-  // 只展示当前站点的异常航班；按（日期、出发站、到达站、航班号）去重，每个唯一航班只展示一条
+  // 只展示从当前站点出发的异常航班（出发站=当前站点）；按（日期、出发站、到达站、航班号）去重
   const seen = new Set();
   const flights = [...SNAPSHOT.abnormalFlights]
-    .filter(f => f.dep === currentSite || f.arr === currentSite)
+    .filter(f => f.dep === currentSite)
     .filter(f => {
       const key = f.plan + '|' + f.dep + '|' + f.arr + '|' + f.flightNo;
       if (seen.has(key)) return false;

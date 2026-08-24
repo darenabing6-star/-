@@ -1445,7 +1445,6 @@ function renderFlights(){
   if (!flights.length) { list.innerHTML = '<div class="flight-empty">暂无异常航班</div>'; return; }
   const html = flights.map(f => `
     <div class="flight-item">
-      <div class="f-badge ${f.type}">${f.type === 'U' ? '改' : '恢'}</div>
       <div class="f-info">
         <div class="f-route">${f.flightNo} <span class="arr">${f.dep} → ${f.arr}</span></div>
         <div class="f-meta">计划起飞 ${f.plan}</div>

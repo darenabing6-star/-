@@ -502,7 +502,7 @@
         <div class="st-legend">
           <span><i style="background:#ffb020"></i>已值机</span>
           <span><i style="background:#7c5cff"></i>订座</span>
-          <span style="margin-left:auto">点击行切换</span>
+          <span style="margin-left:auto">当前站点各航班</span>
         </div>
       </div>
     </div>
@@ -548,7 +548,7 @@
     </div>
 
     <div class="panel" style="flex:1.25;min-height:0">
-      <div class="panel-title"><span class="ic"></span>设备使用统计 · 型号分布 <span class="extra" id="usageSiteName">--</span></div>
+      <div class="panel-title"><span class="ic"></span>CUPPS设备使用统计 · 型号分布 <span class="extra" id="usageSiteName">--</span></div>
       <div class="panel-body" style="padding:2px 6px 6px">
         <div class="usage-wrap">
           <div id="usageChart"></div>
@@ -557,7 +557,7 @@
     </div>
 
     <div class="panel" style="flex:1;min-height:0">
-      <div class="panel-title"><span class="ic"></span>全站设备统计 <span class="extra" id="allChartTotal">共 -- 台</span></div>
+      <div class="panel-title"><span class="ic"></span>站点设备统计 <span class="extra" id="allChartTotal">共 -- 台</span></div>
       <div class="panel-body" style="padding:2px 6px 6px">
         <div class="usage-wrap">
           <div id="allChart"></div>
@@ -823,6 +823,42 @@ function seedDemoHardware(){
     const t = TARGETS[p.iataCode] || { cupps: 4, cuss: 3 };
     SNAPSHOT.hardware.cupps[p.iataCode] = build(p.iataCode, 'WS', t.cupps);
     SNAPSHOT.hardware.cuss[p.iataCode]  = build(p.iataCode, 'KT', t.cuss);
+  });
+
+  // 站点航班旅客明细（航班号 / 起飞时间 / 值机数 / 订座数）
+  SNAPSHOT.siteFlights = {};
+  SNAPSHOT.passengers.forEach(p => {
+    const list = [];
+    const n = 4 + (p.iataCode.charCodeAt(0) % 2);          // 每站 4~5 班
+    for (let i = 0; i < n; i++) {
+      const flightNo = 'CZ' + (1000 + ((p.iataCode.charCodeAt(0) * 31 + i * 7) % 9000));
+      const hh = 6 + ((i * 5 + p.iataCode.length) % 17), mm = (i * 13) % 60;
+      const booking = Math.max(40, Math.round((p.booking / n) * (0.75 + ((i * 17) % 4) / 10)));
+      const checkin = Math.round(booking * (0.7 + ((i * 11 + p.iataCode.length) % 25) / 100));
+      list.push({
+        flightNo,
+        plan: '08-' + String(14 + i).padStart(2, '0') + ' ' + String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0'),
+        checkin, booking
+      });
+    }
+    SNAPSHOT.siteFlights[p.iataCode] = list;
+  });
+
+  // 站点异常航班（dep=该站点）
+  SNAPSHOT.abnormalFlights = [];
+  SNAPSHOT.passengers.forEach(p => {
+    const n = 3 + (p.iataCode.charCodeAt(1) % 2);           // 每站 3~4 条
+    for (let i = 0; i < n; i++) {
+      const flightNo = 'CZ' + (2000 + ((p.iataCode.charCodeAt(1) * 17 + i * 11) % 8000));
+      const hh = 7 + ((i * 6 + p.iataCode.length) % 16), mm = (i * 17) % 60;
+      const u = (i % 2) === 0;
+      SNAPSHOT.abnormalFlights.push({
+        flightNo, dep: p.iataCode, arr: p.iataCode === 'CAN' ? 'NNY' : 'CAN',
+        type: u ? 'U' : 'R', typeName: u ? '航班更改' : '航班恢复',
+        plan: '08-' + String(14 + i).padStart(2, '0') + ' ' + String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0'),
+        note: u ? '时刻调整' : '恢复正常'
+      });
+    }
   });
 }
 /* ================= 状态管理 ================= */
@@ -1344,33 +1380,20 @@ function renderCusDrill(){
 function renderSiteTable(){
   const wrap = $('siteTable');
   wrap.innerHTML = '';
-  const rows = [`
-    <div class="st-row" style="cursor:default;background:transparent;border-color:transparent;padding:3px 10px">
-      <span class="st-hd">站点</span><span class="st-hd c">名称</span>
-      <span class="st-hd">已值机</span><span class="st-hd">订座</span><span class="st-hd">航班</span>
-    </div>`];
-  SNAPSHOT.passengers.forEach(p => {
-    const lv = siteLevel(p);
-    const active = p.iataCode === currentSite ? 'active' : '';
-    rows.push(`
-      <div class="st-row ${active}" data-code="${p.iataCode}" onclick="onManualSelect('${p.iataCode}')">
-        <span class="st-code"><span class="dot" style="background:${lv.color}"></span>${p.iataCode}</span>
-        <span class="st-name">${p.cnName}</span>
-        <span class="st-num">${fmtNum(p.checkin)}</span>
-        <span class="st-num dim">${fmtNum(p.booking)}</span>
-        <span class="st-num" style="color:var(--text-dim);font-size:12.5px">${p.flight}</span>
-      </div>`);
+  const flights = SNAPSHOT.siteFlights[currentSite] || [];
+  const rows = [`\n    <div class=\"st-row\" style=\"cursor:default;background:transparent;border-color:transparent;padding:3px 10px\">\n      <span class=\"st-hd\">航班号</span><span class=\"st-hd c\">起飞时间</span>\n      <span class=\"st-hd\">已值机</span><span class=\"st-hd\">订座</span>\n    </div>`];
+  flights.forEach(f => {
+    rows.push(`\n      <div class=\"st-row\">\n        <span class=\"st-code\"><span class=\"dot\" style=\"background:#00a0ff\"></span>${f.flightNo}</span>\n        <span class=\"st-name\">${f.plan}</span>\n        <span class=\"st-num\">${fmtNum(f.checkin)}</span>\n        <span class=\"st-num dim\">${fmtNum(f.booking)}</span>\n      </div>`);
   });
-  wrap.innerHTML = rows.join('');
-  $('siteTableCount').textContent = `共 ${SNAPSHOT.passengers.length} 站`;
-}
-
-/* ===== 航班滚动轮播 ===== */
+  wrap.innerHTML = rows.join('') || '<div class=\"flight-empty\">暂无航班数据</div>';
+  $('siteTableCount').textContent = '共 ' + flights.length + ' 班';
+}/* ===== 航班滚动轮播 ===== */
 let flightOffset = 0;
 function renderFlights(){
   const list = $('flightList');
   list.innerHTML = '';
-  const flights = [...SNAPSHOT.abnormalFlights];
+  // 只展示当前站点的异常航班
+  const flights = [...SNAPSHOT.abnormalFlights].filter(f => f.dep === currentSite || f.arr === currentSite);
   const nU = flights.filter(f => f.type === 'U').length;
   const nR = flights.filter(f => f.type === 'R').length;
   $('fsU').textContent = nU; $('fsR').textContent = nR;
@@ -1483,12 +1506,8 @@ function renderUsageChart(){
 /* ===== 全站设备统计：全部站点设备类型分布（柱状图） ===== */
 function renderAllDeviceChart(){
   if (!allChart) return;
-  const agg = {};
-  SNAPSHOT.passengers.forEach(p => {
-    const m = SNAPSHOT.deviceTypes[p.iataCode] || {};
-    Object.keys(m).forEach(code => { agg[code] = (agg[code] || 0) + m[code]; });
-  });
-  // 按数量降序
+  // 站点设备统计：只统计当前选中站点的设备型号分布
+  const agg = SNAPSHOT.deviceTypes[currentSite] || {};
   const entries = Object.entries(agg).sort((a, b) => b[1] - a[1]);
   const total = entries.reduce((s, e) => s + e[1], 0);
   const totalEl = document.getElementById('allChartTotal');

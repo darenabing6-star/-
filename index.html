@@ -262,7 +262,7 @@
   .flight-empty{color:var(--text-dim);text-align:center;padding:24px 0;font-size:13px}
 
   /* 右1 站点设备状态（原监控屏同款：设备总数 + 在线/故障/离线 + 航站楼） */
-  .dev-wrap{display:flex;flex-direction:column;height:100%;padding:4px 2px;gap:13px}
+  .dev-wrap{display:flex;flex-direction:column;height:auto;padding:4px 2px;gap:13px}
   .dev-total{display:flex;align-items:baseline;justify-content:center;gap:10px;flex:0 0 auto;
     background:linear-gradient(90deg,rgba(0,120,232,.22),rgba(0,160,255,.05) 55%,transparent);
     border:1px solid rgba(0,160,255,.35);border-radius:12px;padding:12px 12px 10px}
@@ -536,9 +536,9 @@
 
   <!-- 右列 -->
   <div class="col col-right">
-    <div class="panel" style="flex:0 0 366px">
+    <div class="panel" style="flex:0 0 auto">
       <div class="panel-title"><span class="ic"></span>站点设备状态 <span class="extra" id="devSiteName">--</span></div>
-      <div class="panel-body">
+      <div class="panel-body" style="height:auto">
         <div class="dev-wrap">
           <div class="dev-total">
             <div class="dt-num" id="dTotal">--</div>

@@ -852,16 +852,18 @@ function seedDemoHardware(){
     SNAPSHOT.siteFlights[p.iataCode] = list;
   });
 
-  // 站点异常航班（dep=该站点）
+  // 站点异常航班（dep=该站点；到达站从其它站点轮换，保证多样化）
   SNAPSHOT.abnormalFlights = [];
   SNAPSHOT.passengers.forEach(p => {
+    const others = SNAPSHOT.passengers.filter(x => x.iataCode !== p.iataCode);
     const n = 3 + (p.iataCode.charCodeAt(1) % 2);           // 每站 3~4 条
     for (let i = 0; i < n; i++) {
       const flightNo = 'CZ' + (2000 + ((p.iataCode.charCodeAt(1) * 17 + i * 11) % 8000));
       const hh = 7 + ((i * 6 + p.iataCode.length) % 16), mm = (i * 17) % 60;
       const u = (i % 2) === 0;
+      const arr = others[(i * 3 + p.iataCode.length) % others.length].iataCode;
       SNAPSHOT.abnormalFlights.push({
-        flightNo, dep: p.iataCode, arr: p.iataCode === 'CAN' ? 'NNY' : 'CAN',
+        flightNo, dep: p.iataCode, arr,
         type: u ? 'U' : 'R', typeName: u ? '航班更改' : '航班恢复',
         plan: '08-' + String(14 + i).padStart(2, '0') + ' ' + String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0'),
         note: u ? '时刻调整' : '恢复正常'

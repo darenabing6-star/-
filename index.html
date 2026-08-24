@@ -218,6 +218,9 @@
   .st-row .st-num{font-family:var(--font-num);font-size:14.5px;font-weight:bold;color:#fff;text-align:right}
   .st-row .st-num.dim{color:var(--text-dim);font-weight:normal;font-size:12.5px}
   .st-row .st-hd{font-size:10px;color:var(--gray2);text-align:right;white-space:nowrap}
+  /* 航班明细：表头与内容对齐（前两列左对齐，后两列右对齐，内边距一致） */
+  .st-row.flight{padding:6px 9px}
+  .st-row.flight .st-hd:nth-child(1),.st-row.flight .st-hd:nth-child(2){text-align:left}
   /* 航班明细行：4 列定宽，标题/日期不换行 */
   .st-row.flight{grid-template-columns:76px 116px 64px 64px}
   .st-row.flight .st-code{font-size:13px}
@@ -1402,7 +1405,7 @@ function renderSiteTable(){
   const wrap = $('siteTable');
   wrap.innerHTML = '';
   const flights = SNAPSHOT.siteFlights[currentSite] || [];
-  const rows = [`\n    <div class=\"st-row flight\" style=\"cursor:default;background:transparent;border-color:transparent;padding:3px 10px\">\n      <span class=\"st-hd\">航班号</span><span class=\"st-hd c\">起飞时间</span>\n      <span class=\"st-hd\">已值机</span><span class=\"st-hd\">订座</span>\n    </div>`];
+  const rows = [`\n    <div class=\"st-row flight\" style=\"cursor:default;background:transparent;border-color:transparent\">\n      <span class=\"st-hd\">航班号</span><span class=\"st-hd c\">起飞时间</span>\n      <span class=\"st-hd\">已值机</span><span class=\"st-hd\">订座</span>\n    </div>`];
   flights.forEach(f => {
     rows.push(`\n      <div class=\"st-row flight\">\n        <span class=\"st-code\"><span class=\"dot\" style=\"background:#00a0ff\"></span>${f.flightNo}</span>\n        <span class=\"st-name\">${f.plan}</span>\n        <span class=\"st-num\">${fmtNum(f.checkin)}</span>\n        <span class=\"st-num dim\">${fmtNum(f.booking)}</span>\n      </div>`);
   });

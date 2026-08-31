@@ -519,7 +519,7 @@
 
   <!-- 左列 -->
   <div class="col col-left">
-    <div class="panel" style="flex:0 0 148px">
+<div class="panel" style="flex:0 0 148px">
       <div class="panel-title"><span class="ic"></span>已值机旅客 <span class="extra" id="kpiSiteName">--</span></div>
       <div class="panel-body">
         <div class="kpi-grid">
@@ -531,7 +531,7 @@
       </div>
     </div>
 
-    <div class="panel" style="flex:0 0 232px">
+<div class="panel" style="flex:0 0 232px">
       <div class="panel-title"><span class="ic"></span>站点旅客明细 <span class="extra" id="siteTableCount">--</span></div>
       <div class="panel-body" style="overflow-y:auto">
         <div class="site-table" id="siteTable"></div>
@@ -543,25 +543,27 @@
       </div>
     </div>
 
-    <div class="panel" style="flex:1;min-height:0">
-      <div class="panel-title"><span class="ic"></span>设备事件动态 <span class="extra" id="evCount">--</span></div>
-      <div class="panel-body" style="display:flex;flex-direction:column;overflow:hidden">
-        <div class="ev-summary">
-          <div class="es-box on"><span class="es-dot"></span><b id="evOn">--</b><em>上线</em></div>
-          <div class="es-box fault"><span class="es-dot"></span><b id="evFault">--</b><em>故障</em></div>
-          <div class="es-box recover"><span class="es-dot"></span><b id="evRecover">--</b><em>恢复</em></div>
-          <div class="es-box off"><span class="es-dot"></span><b id="evOff">--</b><em>离线</em></div>
+<div class="panel" style="flex:1;min-height:0">
+      <div class="panel-title"><span class="ic"></span>CUPPS设备使用统计 · 型号分布 <span class="extra" id="usageSiteName">--</span></div>
+      <div class="panel-body" style="padding:2px 6px 6px">
+        <div class="usage-wrap">
+          <div id="usageChart"></div>
         </div>
-        <div class="ev-viewport" id="evViewport">
-          <div class="ev-list" id="evList"></div>
+      </div>
+    </div>
+
+<div class="panel" style="flex:1;min-height:0">
+      <div class="panel-title"><span class="ic"></span>CUPPS设备使用统计 · 航司分布 <span class="extra" id="allChartTotal">共 -- 次</span></div>
+      <div class="panel-body" style="padding:2px 6px 6px">
+        <div class="usage-wrap">
+          <div id="allChart"></div>
         </div>
       </div>
     </div>
   </div>
-
   <!-- 右列 -->
   <div class="col col-right">
-    <div class="panel" style="flex:0 0 auto">
+<div class="panel" style="flex:0 0 auto">
       <div class="panel-title"><span class="ic"></span>站点设备状态 <span class="extra" id="devSiteName">--</span></div>
       <div class="panel-body" style="height:auto">
         <div class="dev-wrap">
@@ -585,20 +587,17 @@
       </div>
     </div>
 
-    <div class="panel" style="flex:1.25;min-height:0">
-      <div class="panel-title"><span class="ic"></span>CUPPS设备使用统计 · 型号分布 <span class="extra" id="usageSiteName">--</span></div>
-      <div class="panel-body" style="padding:2px 6px 6px">
-        <div class="usage-wrap">
-          <div id="usageChart"></div>
+<div class="panel" style="flex:1;min-height:0">
+      <div class="panel-title"><span class="ic"></span>设备事件动态 <span class="extra" id="evCount">--</span></div>
+      <div class="panel-body" style="display:flex;flex-direction:column;overflow:hidden">
+        <div class="ev-summary">
+          <div class="es-box on"><span class="es-dot"></span><b id="evOn">--</b><em>上线</em></div>
+          <div class="es-box fault"><span class="es-dot"></span><b id="evFault">--</b><em>故障</em></div>
+          <div class="es-box recover"><span class="es-dot"></span><b id="evRecover">--</b><em>恢复</em></div>
+          <div class="es-box off"><span class="es-dot"></span><b id="evOff">--</b><em>离线</em></div>
         </div>
-      </div>
-    </div>
-
-    <div class="panel" style="flex:1;min-height:0">
-      <div class="panel-title"><span class="ic"></span>CUPPS设备使用统计 · 航司分布 <span class="extra" id="allChartTotal">共 -- 次</span></div>
-      <div class="panel-body" style="padding:2px 6px 6px">
-        <div class="usage-wrap">
-          <div id="allChart"></div>
+        <div class="ev-viewport" id="evViewport">
+          <div class="ev-list" id="evList"></div>
         </div>
       </div>
     </div>

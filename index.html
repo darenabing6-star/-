@@ -235,7 +235,7 @@
   .st-legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 
   /* 左3 设备事件动态 */
-  .ev-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:8px;flex-shrink:0}
+  .ev-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:8px;flex-shrink:0}
   .es-box{border-radius:8px;padding:7px 4px;border:1px solid;display:flex;flex-direction:column;align-items:center;gap:2px}
   .es-box .es-dot{width:8px;height:8px;border-radius:50%}
   .es-box b{font-family:var(--font-num);font-size:18px;font-weight:bold;line-height:1.1}
@@ -246,9 +246,6 @@
   .es-box.fault{border-color:rgba(255,93,108,.4);background:rgba(255,93,108,.09)}
   .es-box.fault .es-dot{background:#f5222d}
   .es-box.fault b{color:var(--red)}
-  .es-box.recover{border-color:rgba(0,160,255,.4);background:rgba(0,160,255,.08)}
-  .es-box.recover .es-dot{background:#00a0ff}
-  .es-box.recover b{color:var(--cyan)}
   .es-box.off{border-color:rgba(148,163,184,.4);background:rgba(148,163,184,.08)}
   .es-box.off .es-dot{background:#94a3b8}
   .es-box.off b{color:#94a3b8}
@@ -261,7 +258,6 @@
   .ev-ico svg{width:16px;height:16px}
   .ev-ico.on{color:#22c55e;background:rgba(53,224,143,.14);border-color:rgba(53,224,143,.4)}
   .ev-ico.fault{color:var(--red);background:rgba(255,93,108,.14);border-color:rgba(255,93,108,.4)}
-  .ev-ico.recover{color:var(--cyan);background:rgba(0,160,255,.14);border-color:rgba(0,160,255,.4)}
   .ev-ico.off{color:#94a3b8;background:rgba(148,163,184,.12);border-color:rgba(148,163,184,.4)}
   .ev-info{flex:1;min-width:0}
   .ev-title{font-size:13px;font-weight:bold;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -270,7 +266,6 @@
   .ev-type{font-size:11px;padding:3px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0}
   .ev-type.on{color:#7df0b8;background:rgba(53,224,143,.12);border:1px solid rgba(53,224,143,.35)}
   .ev-type.fault{color:#ff8a95;background:rgba(255,93,108,.15);border:1px solid rgba(255,93,108,.4)}
-  .ev-type.recover{color:#8fd0ff;background:rgba(0,160,255,.12);border:1px solid rgba(0,160,255,.35)}
   .ev-type.off{color:#94a3b8;background:rgba(148,163,184,.12);border:1px solid rgba(148,163,184,.35)}
   .ev-empty{color:var(--text-dim);text-align:center;padding:24px 0;font-size:13px}
   /* 数据时间范围选择 */
@@ -591,9 +586,8 @@
       <div class="panel-title"><span class="ic"></span>设备事件动态 <span class="extra" id="evCount">--</span></div>
       <div class="panel-body" style="display:flex;flex-direction:column;overflow:hidden">
         <div class="ev-summary">
-          <div class="es-box on"><span class="es-dot"></span><b id="evOn">--</b><em>上线</em></div>
+          <div class="es-box on"><span class="es-dot"></span><b id="evOn">--</b><em>在线</em></div>
           <div class="es-box fault"><span class="es-dot"></span><b id="evFault">--</b><em>故障</em></div>
-          <div class="es-box recover"><span class="es-dot"></span><b id="evRecover">--</b><em>恢复</em></div>
           <div class="es-box off"><span class="es-dot"></span><b id="evOff">--</b><em>离线</em></div>
         </div>
         <div class="ev-viewport" id="evViewport">
@@ -717,9 +711,9 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
 <script>
 /* ================= 设备类型图标/名称 ================= */
 const DEV_TYPES = {
-  BC:{name:'登机牌打印',icon:'printer'},BP:{name:'登机牌打印机',icon:'printer'},BT:{name:'行李牌打印',icon:'tag'},
-  BG:{name:'行李托运',icon:'bag'},BGR:{name:'行李称重',icon:'bag'},IR:{name:'扫描器',icon:'scan'},
-  MS:{name:'显示器',icon:'screen'},OC:{name:'值机柜台',icon:'counter'},PR:{name:'打印机',icon:'printer'},
+  BP:{name:'登机牌打印机',icon:'printer'},BT:{name:'行李条打印机',icon:'tag'},BG:{name:'登机口阅读器',icon:'scan'},
+  MS:{name:'磁条阅读器',icon:'screen'},OC:{name:'光学字符阅读器',icon:'scan'},BC:{name:'条码阅读器',icon:'scan'},
+  IR:{name:'身份证阅读器',icon:'scan'},BGR:{name:'行李称重',icon:'bag'},PR:{name:'打印机',icon:'printer'},
   RW:{name:'读写器',icon:'chip'},ZI:{name:'自助值机',icon:'kiosk'},ZL:{name:'行李条',icon:'tag'},
   OCR:{name:'证件扫描',icon:'scan'},ATB:{name:'ATB打印',icon:'printer'},BTP:{name:'行李牌打印',icon:'tag'},
   XX:{name:'其他设备',icon:'chip'},'?':{name:'未知设备',icon:'chip'}
@@ -935,11 +929,12 @@ function seedDemoHardware(){
 
   // 设备事件动态：每站生成按分钟偏移的事件（最近在前），供按时间范围(24h/7d/30d)筛选
   SNAPSHOT.deviceEvents = {};
-  const EVT = [['on','上线'],['fault','故障'],['recover','恢复'],['off','离线']];
+  // 设备状态仅分：在线(on) / 故障(fault) / 离线(off)
+  const EVT = [['on','在线'],['fault','故障'],['off','离线']];
+  // 事件设备仅取这些机型（缩写参考用户给定）
+  const DEVPOOL = ['BP','BT','BG','MS','OC','BC','IR'];
   SNAPSHOT.passengers.forEach(pp => {
     const c = pp.iataCode;
-    const pool = Object.keys(SNAPSHOT.deviceTypes[c] || {});
-    if (!pool.length) { SNAPSHOT.deviceEvents[c] = []; return; }
     const evs = [];
     // 分档生成：近24h 6 条、近7天 18 条、近30天 40 条，保证各时间范围数量差异明显
     const bands = [[1440, 6], [10080, 18], [43200, 40]];
@@ -947,8 +942,8 @@ function seedDemoHardware(){
       for (let k = 0; k < cnt; k++) {
         const slot = Math.max(1, Math.floor(lim / cnt));
         const mi = Math.floor(k * lim / cnt) + ((c.charCodeAt(0) * 3 + k * 17) % slot);
-        const model = pool[(c.charCodeAt(0) + k * 5) % pool.length];
-        const type = EVT[(c.charCodeAt(1) + k) % 4][0];
+        const model = DEVPOOL[(c.charCodeAt(0) + k * 5) % DEVPOOL.length];
+        const type = EVT[(c.charCodeAt(1) + k) % 3][0];
         evs.push({ minsAgo: mi, model, type, typeName: EVT.find(x => x[0] === type)[1], site: c });
       }
     });
@@ -1483,7 +1478,6 @@ function renderEvents(){
   const cnt = t => evs.filter(e => e.type === t).length;
   $('evOn').textContent = cnt('on');
   $('evFault').textContent = cnt('fault');
-  $('evRecover').textContent = cnt('recover');
   $('evOff').textContent = cnt('off');
   const rangeName = timeRange === '7d' ? '近7天' : timeRange === '30d' ? '近30天' : '近24小时';
   $('evCount').textContent = '共 ' + evs.length + ' 条 · ' + rangeName;

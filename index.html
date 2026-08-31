@@ -234,32 +234,51 @@
   .st-legend{display:flex;gap:14px;font-size:11px;color:var(--text-dim);margin-top:7px;padding:0 2px}
   .st-legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 
-  /* 左3 航班滚动 */
-  .flight-stat{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;flex-shrink:0}
-  .fs-box{border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:10px;border:1px solid}
-  .fs-box .fs-v{font-family:var(--font-num);font-size:22px;font-weight:bold}
-  .fs-box .fs-l{font-size:11px;color:var(--text-dim)}
-  .fs-box.u{border-color:rgba(255,93,108,.4);background:rgba(255,93,108,.09)}
-  .fs-box.u .fs-v{color:var(--red)}
-  .fs-box.r{border-color:rgba(53,224,143,.4);background:rgba(53,224,143,.08)}
-  .fs-box.r .fs-v{color:var(--green)}
-  .flight-viewport{flex:1;min-height:0;overflow-y:auto;position:relative}
-  .flight-list{display:flex;flex-direction:column;gap:6px;transition:transform .7s cubic-bezier(.4,0,.2,1)}
-  .flight-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;
+  /* 左3 设备事件动态 */
+  .ev-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:8px;flex-shrink:0}
+  .es-box{border-radius:8px;padding:7px 4px;border:1px solid;display:flex;flex-direction:column;align-items:center;gap:2px}
+  .es-box .es-dot{width:8px;height:8px;border-radius:50%}
+  .es-box b{font-family:var(--font-num);font-size:18px;font-weight:bold;line-height:1.1}
+  .es-box em{font-style:normal;font-size:10.5px;color:var(--text-dim)}
+  .es-box.on{border-color:rgba(53,224,143,.4);background:rgba(53,224,143,.08)}
+  .es-box.on .es-dot{background:#22c55e}
+  .es-box.on b{color:#22c55e}
+  .es-box.fault{border-color:rgba(255,93,108,.4);background:rgba(255,93,108,.09)}
+  .es-box.fault .es-dot{background:#f5222d}
+  .es-box.fault b{color:var(--red)}
+  .es-box.recover{border-color:rgba(0,160,255,.4);background:rgba(0,160,255,.08)}
+  .es-box.recover .es-dot{background:#00a0ff}
+  .es-box.recover b{color:var(--cyan)}
+  .es-box.off{border-color:rgba(148,163,184,.4);background:rgba(148,163,184,.08)}
+  .es-box.off .es-dot{background:#94a3b8}
+  .es-box.off b{color:#94a3b8}
+  .ev-viewport{flex:1;min-height:0;overflow-y:auto;position:relative}
+  .ev-list{display:flex;flex-direction:column;gap:6px}
+  .ev-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;
     background:rgba(10,26,58,.6);border:1px solid rgba(28,58,110,.5);flex-shrink:0}
-  .flight-item:hover{background:rgba(0,120,232,.15);border-color:rgba(0,160,255,.4)}
-  .f-badge{width:34px;height:34px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
-    font-family:var(--font-num);font-size:13px;font-weight:bold}
-  .f-badge.U{background:rgba(255,93,108,.18);color:var(--red);border:1px solid rgba(255,93,108,.4)}
-  .f-badge.R{background:rgba(53,224,143,.14);color:var(--green);border:1px solid rgba(53,224,143,.4)}
-  .f-info{flex:1;min-width:0}
-  .f-route{font-size:13px;font-weight:bold;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .f-route .arr{color:var(--cyan)}
-  .f-meta{font-size:11px;color:var(--text-dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .f-type{font-size:11px;padding:3px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0}
-  .f-type.U{background:rgba(255,93,108,.15);color:#ff8a95;border:1px solid rgba(255,93,108,.35)}
-  .f-type.R{background:rgba(53,224,143,.12);color:#7df0b8;border:1px solid rgba(53,224,143,.35)}
-  .flight-empty{color:var(--text-dim);text-align:center;padding:24px 0;font-size:13px}
+  .ev-item:hover{background:rgba(0,120,232,.15);border-color:rgba(0,160,255,.4)}
+  .ev-ico{width:30px;height:30px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid}
+  .ev-ico svg{width:16px;height:16px}
+  .ev-ico.on{color:#22c55e;background:rgba(53,224,143,.14);border-color:rgba(53,224,143,.4)}
+  .ev-ico.fault{color:var(--red);background:rgba(255,93,108,.14);border-color:rgba(255,93,108,.4)}
+  .ev-ico.recover{color:var(--cyan);background:rgba(0,160,255,.14);border-color:rgba(0,160,255,.4)}
+  .ev-ico.off{color:#94a3b8;background:rgba(148,163,184,.12);border-color:rgba(148,163,184,.4)}
+  .ev-info{flex:1;min-width:0}
+  .ev-title{font-size:13px;font-weight:bold;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ev-title .site{color:var(--cyan);font-weight:normal}
+  .ev-meta{font-size:11px;color:var(--text-dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ev-type{font-size:11px;padding:3px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0}
+  .ev-type.on{color:#7df0b8;background:rgba(53,224,143,.12);border:1px solid rgba(53,224,143,.35)}
+  .ev-type.fault{color:#ff8a95;background:rgba(255,93,108,.15);border:1px solid rgba(255,93,108,.4)}
+  .ev-type.recover{color:#8fd0ff;background:rgba(0,160,255,.12);border:1px solid rgba(0,160,255,.35)}
+  .ev-type.off{color:#94a3b8;background:rgba(148,163,184,.12);border:1px solid rgba(148,163,184,.35)}
+  .ev-empty{color:var(--text-dim);text-align:center;padding:24px 0;font-size:13px}
+  /* 数据时间范围选择 */
+  .map-info .range-seg{display:flex;gap:4px}
+  .map-info .range-seg .seg{font-size:12px;color:var(--text-dim);border:1px solid rgba(0,160,255,.25);
+    background:rgba(10,26,58,.6);padding:3px 9px;border-radius:9px;cursor:pointer;transition:.2s;white-space:nowrap}
+  .map-info .range-seg .seg:hover{color:#fff;border-color:rgba(0,160,255,.5)}
+  .map-info .range-seg .seg.active{color:var(--gold);border-color:rgba(255,197,61,.5);background:rgba(255,197,61,.12)}
 
   /* 右1 站点设备状态（原监控屏同款：设备总数 + 在线/故障/离线 + 航站楼） */
   .dev-wrap{display:flex;flex-direction:column;height:auto;padding:4px 2px;gap:13px}
@@ -468,7 +487,11 @@
     <div class="mi-sep"></div>
     <div class="mi-dt">
       <div class="l">数据时间</div>
-      <div class="v">近24小时</div>
+      <div class="range-seg" id="rangeSeg">
+        <button class="seg active" data-range="24h" onclick="setTimeRange('24h')">近24小时</button>
+        <button class="seg" data-range="7d" onclick="setTimeRange('7d')">近7天</button>
+        <button class="seg" data-range="30d" onclick="setTimeRange('30d')">近30天</button>
+      </div>
     </div>
     <div class="mi-sep"></div>
     <button class="mode-tag fs-btn" id="fsBtn" onclick="toggleFullscreen()" title="全屏展示（F 键进入 / ESC 退出）">⛶ 全屏</button>
@@ -521,14 +544,16 @@
     </div>
 
     <div class="panel" style="flex:1;min-height:0">
-      <div class="panel-title"><span class="ic"></span>航班动态 · 异常航班 <span class="extra" id="flightCount">--</span></div>
+      <div class="panel-title"><span class="ic"></span>设备事件动态 <span class="extra" id="evCount">--</span></div>
       <div class="panel-body" style="display:flex;flex-direction:column;overflow:hidden">
-        <div class="flight-stat">
-          <div class="fs-box u"><div class="fs-v" id="fsU">--</div><div class="fs-l">航班更改</div></div>
-          <div class="fs-box r"><div class="fs-v" id="fsR">--</div><div class="fs-l">航班恢复</div></div>
+        <div class="ev-summary">
+          <div class="es-box on"><span class="es-dot"></span><b id="evOn">--</b><em>上线</em></div>
+          <div class="es-box fault"><span class="es-dot"></span><b id="evFault">--</b><em>故障</em></div>
+          <div class="es-box recover"><span class="es-dot"></span><b id="evRecover">--</b><em>恢复</em></div>
+          <div class="es-box off"><span class="es-dot"></span><b id="evOff">--</b><em>离线</em></div>
         </div>
-        <div class="flight-viewport" id="flightViewport">
-          <div class="flight-list" id="flightList"></div>
+        <div class="ev-viewport" id="evViewport">
+          <div class="ev-list" id="evList"></div>
         </div>
       </div>
     </div>
@@ -908,9 +933,33 @@ function seedDemoHardware(){
     })).sort((x, y) => y.count - x.count);
     SNAPSHOT.airlineUsage[c] = list;
   });
+
+  // 设备事件动态：每站生成按分钟偏移的事件（最近在前），供按时间范围(24h/7d/30d)筛选
+  SNAPSHOT.deviceEvents = {};
+  const EVT = [['on','上线'],['fault','故障'],['recover','恢复'],['off','离线']];
+  SNAPSHOT.passengers.forEach(pp => {
+    const c = pp.iataCode;
+    const pool = Object.keys(SNAPSHOT.deviceTypes[c] || {});
+    if (!pool.length) { SNAPSHOT.deviceEvents[c] = []; return; }
+    const evs = [];
+    // 分档生成：近24h 6 条、近7天 18 条、近30天 40 条，保证各时间范围数量差异明显
+    const bands = [[1440, 6], [10080, 18], [43200, 40]];
+    bands.forEach(([lim, cnt]) => {
+      for (let k = 0; k < cnt; k++) {
+        const slot = Math.max(1, Math.floor(lim / cnt));
+        const mi = Math.floor(k * lim / cnt) + ((c.charCodeAt(0) * 3 + k * 17) % slot);
+        const model = pool[(c.charCodeAt(0) + k * 5) % pool.length];
+        const type = EVT[(c.charCodeAt(1) + k) % 4][0];
+        evs.push({ minsAgo: mi, model, type, typeName: EVT.find(x => x[0] === type)[1], site: c });
+      }
+    });
+    evs.sort((a, b) => a.minsAgo - b.minsAgo);
+    SNAPSHOT.deviceEvents[c] = evs;
+  });
 }
 /* ================= 状态管理 ================= */
 let currentSite = 'CAN';
+let timeRange = '24h';   // 数据时间范围：24h / 7d / 30d
 let mode = 'demo';
 let refreshTimer = null, carouselTimer = null, carouselIdx = 0;
 let apiBase = 'http://172.22.0.71:8081/monitor/api';
@@ -1318,7 +1367,7 @@ function refreshAll(){
   $('passUpdTime').textContent = p.upd || SNAPSHOT.updateTime;
 
   renderSiteTable();
-  renderFlights();
+  renderEvents();
 
   // CUPPS / CUSS 运行：数据图（环图 + 航站楼堆叠条）
   renderCupDrill();
@@ -1425,34 +1474,40 @@ function renderSiteTable(){
   wrap.innerHTML = rows.join('') || '<div class=\"flight-empty\">暂无航班数据</div>';
   $('siteTableCount').textContent = '共 ' + flights.length + ' 班';
 }
-function renderFlights(){
-  const list = $('flightList');
+function renderEvents(){
+  const list = $('evList');
   list.innerHTML = '';
-  // 只展示从当前站点出发的异常航班（出发站=当前站点）；按（日期、出发站、到达站、航班号）去重
-  const seen = new Set();
-  const flights = [...SNAPSHOT.abnormalFlights]
-    .filter(f => f.dep === currentSite)
-    .filter(f => {
-      const key = f.plan + '|' + f.dep + '|' + f.arr + '|' + f.flightNo;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  const nU = flights.filter(f => f.type === 'U').length;
-  const nR = flights.filter(f => f.type === 'R').length;
-  $('fsU').textContent = nU; $('fsR').textContent = nR;
-  $('flightCount').textContent = `共 ${flights.length} 条`;
-  if (!flights.length) { list.innerHTML = '<div class="flight-empty">暂无异常航班</div>'; return; }
-  const html = flights.map(f => `
-    <div class="flight-item">
-      <div class="f-info">
-        <div class="f-route">${f.flightNo} <span class="arr">${f.dep} → ${f.arr}</span></div>
-        <div class="f-meta">计划起飞 ${f.plan}</div>
-      </div>
-      <div class="f-type ${f.type}">${f.typeName}</div>
-    </div>`).join('');
-  // 单份展示（不再双份滚动），数量与列表一一对应
-  list.innerHTML = html;
+  // 数据时间范围（分钟）：24h / 7d / 30d
+  const rangeMin = timeRange === '7d' ? 10080 : timeRange === '30d' ? 43200 : 1440;
+  const evs = ((SNAPSHOT.deviceEvents && SNAPSHOT.deviceEvents[currentSite]) || [])
+    .filter(e => e.minsAgo <= rangeMin);
+  const cnt = t => evs.filter(e => e.type === t).length;
+  $('evOn').textContent = cnt('on');
+  $('evFault').textContent = cnt('fault');
+  $('evRecover').textContent = cnt('recover');
+  $('evOff').textContent = cnt('off');
+  const rangeName = timeRange === '7d' ? '近7天' : timeRange === '30d' ? '近30天' : '近24小时';
+  $('evCount').textContent = '共 ' + evs.length + ' 条 · ' + rangeName;
+  if (!evs.length) { list.innerHTML = '<div class="ev-empty">暂无设备事件</div>'; return; }
+  const now = Date.now();
+  const pad = n => String(n).padStart(2, '0');
+  const fmt = ms => { const t = new Date(ms); return pad(t.getMonth()+1) + '-' + pad(t.getDate()) + ' ' + pad(t.getHours()) + ':' + pad(t.getMinutes()); };
+  list.innerHTML = evs.map(e => {
+    const t = fmt(now - e.minsAgo * 60000);
+    return '<div class="ev-item">' +
+      '<div class="ev-ico ' + e.type + '">' + devIcon(e.model) + '</div>' +
+      '<div class="ev-info">' +
+        '<div class="ev-title">' + devName(e.model) + ' <span class="site">' + e.site + '</span></div>' +
+        '<div class="ev-meta">' + t + ' · 设备 ' + e.model + ' ' + e.typeName + '</div>' +
+      '</div>' +
+      '<div class="ev-type ' + e.type + '">' + e.typeName + '</div>' +
+    '</div>';
+  }).join('');
+}
+function setTimeRange(r){
+  timeRange = r;
+  document.querySelectorAll('#rangeSeg .seg').forEach(b => b.classList.toggle('active', b.dataset.range === r));
+  renderEvents();
 }
 function pct(a, b){ return b > 0 ? Math.round(a/b*100) + '%' : '0%'; }
 function renderDots(id, total, on, off, fault){

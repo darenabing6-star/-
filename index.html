@@ -105,31 +105,31 @@
   .clock .d{font-size:12px;color:var(--text-dim);margin-top:4px}
 
   /* ===== 站点切换 ===== */
-  .site-bar{position:absolute;top:108px;left:0;right:0;height:50px;z-index:25;
-    display:flex;align-items:center;gap:12px;padding:0 24px}
-  .site-group{display:flex;align-items:center;gap:7px;background:var(--panel);
-    border:1px solid var(--border);border-radius:11px;padding:5px 9px;backdrop-filter:blur(6px)}
+  .site-bar{position:absolute;top:104px;left:0;right:0;z-index:25;
+    display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:0 24px}
+  .site-group{display:flex;align-items:center;gap:6px;background:var(--panel);
+    border:1px solid var(--border);border-radius:10px;padding:3px 7px;backdrop-filter:blur(6px)}
   .site-group-label{font-size:13px;color:#cfe0ff;padding:0 5px;letter-spacing:1px}
   .site-count{font-family:var(--font-num);font-size:16px;font-weight:bold;color:#ffd75e;padding:2px 11px;border-radius:12px;
     background:rgba(255,197,61,.18);border:1px solid rgba(255,197,61,.6);margin-left:6px;line-height:1;
     text-shadow:0 0 10px rgba(255,197,61,.7);box-shadow:0 0 14px rgba(255,197,61,.3)}
-  .site-btn{min-width:70px;padding:5px 11px;border-radius:9px;border:1px solid transparent;
+  .site-btn{min-width:66px;padding:2px 9px;border-radius:8px;border:1px solid transparent;
     background:rgba(28,58,110,.35);color:var(--text-dim);font-size:13px;cursor:pointer;
-    display:flex;flex-direction:column;align-items:center;gap:1px;transition:.2s;font-family:'Microsoft YaHei'}
-  .site-btn .code{font-family:var(--font-num);font-size:15px;font-weight:bold;letter-spacing:1px}
-  .site-btn .nm{font-size:10px;color:var(--text-dim)}
+    display:flex;flex-direction:column;align-items:center;gap:0;transition:.2s;font-family:'Microsoft YaHei'}
+  .site-btn .code{font-family:var(--font-num);font-size:14px;font-weight:bold;letter-spacing:1px}
+  .site-btn .nm{font-size:9px;color:var(--text-dim)}
   .site-btn:hover{color:#fff;border-color:rgba(0,160,255,.4);background:rgba(0,160,255,.12)}
   .site-btn.active{color:#fff;border-color:var(--cyan);
     background:linear-gradient(135deg,rgba(0,120,232,.6),rgba(0,160,255,.5));
     box-shadow:0 0 18px rgba(0,160,255,.4)}
   .site-btn.active .nm{color:#cdeaff}
 
-  .site-tip{margin-left:auto;font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:6px;
+  .site-tip{position:absolute;right:24px;top:0;font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:6px;
     background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:5px 12px;backdrop-filter:blur(6px)}
   .pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);animation:pulse 1.4s infinite}
 
   /* ===== 地图信息条（时钟 + 数据时间（近24小时）+ 控制按钮） ===== */
-  .map-info{position:absolute;top:164px;min-height:44px;left:50%;transform:translateX(-50%);z-index:90;
+  .map-info{position:absolute;top:208px;min-height:44px;left:50%;transform:translateX(-50%);z-index:90;
     display:flex;align-items:center;gap:0;padding:7px 14px;border-radius:12px;
     background:var(--panel);border:1px solid var(--border);backdrop-filter:blur(8px);
     box-shadow:0 8px 30px rgba(0,0,0,.4)}
@@ -144,7 +144,7 @@
   .map-info .update-tag,.map-info .mode-tag{flex-shrink:0}
 
   /* ===== 地图上设备总览卡片（全量设备） ===== */
-  .map-equip{position:absolute;top:252px;left:50%;transform:translateX(-50%);z-index:20;
+  .map-equip{position:absolute;top:270px;left:50%;transform:translateX(-50%);z-index:20;
     display:flex;align-items:center;gap:0;padding:6px 10px;border-radius:11px;
     background:rgba(6,16,44,.6);border:1px solid rgba(0,160,255,.4);backdrop-filter:blur(8px);
     box-shadow:0 8px 30px rgba(0,0,0,.45)}
@@ -173,7 +173,7 @@
   .map-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
 
   /* ===== 左右栏（贴底 + 向上延伸到站点栏） ===== */
-  .col{position:absolute;top:172px;bottom:14px;display:flex;flex-direction:column;gap:12px;z-index:15}
+  .col{position:absolute;top:208px;bottom:14px;display:flex;flex-direction:column;gap:12px;z-index:15}
   .col-left{left:24px;width:364px}
   .col-right{right:24px;width:364px}
   .panel{position:relative;background:var(--panel);backdrop-filter:blur(10px);
@@ -446,7 +446,7 @@
   ::-webkit-scrollbar-thumb{background:rgba(0,140,255,.35);border-radius:3px}
   ::-webkit-scrollbar-track{background:transparent}
 
-  .settings{position:absolute;top:196px;right:26px;z-index:60;width:330px;
+  .settings{position:absolute;top:240px;right:26px;z-index:60;width:330px;
     background:rgba(7,17,38,.98);border:1px solid var(--border-glow);border-radius:12px;padding:16px;
     box-shadow:0 12px 40px rgba(0,0,0,.6);display:none}
   .settings.show{display:block}
@@ -506,7 +506,7 @@
 
   <!-- 站点切换 -->
   <div class="site-bar">
-    <div class="site-group" id="domesticGroup"><span class="site-group-label">国内站点</span></div>
+    <div class="site-group" id="domesticGroup"><span class="site-group-label">国内站点</span><span class="site-count" id="domCount">--</span></div>
     <div class="site-group" id="intlGroup"><span class="site-group-label">国际站点</span><span class="site-count" id="intlCount">--</span></div>
     <div class="site-tip"><span class="pulse-dot"></span>点击地图站点 / 按钮 / 列表可切换 · 手动切换后 10 秒无操作自动恢复轮播</div>
   </div>
@@ -1377,7 +1377,8 @@ function buildSiteButtons(){
   };
   render(SNAPSHOT.passengers.filter(p => p.areaType === 'D'), $('domesticGroup'));
   render(SNAPSHOT.passengers.filter(p => p.areaType === 'I'), $('intlGroup'));
-  const ic = $('intlCount');
+  const dc = $('domCount'), ic = $('intlCount');
+  if (dc) dc.textContent = SNAPSHOT.passengers.filter(p => p.areaType === 'D').length;
   if (ic) ic.textContent = SNAPSHOT.passengers.filter(p => p.areaType === 'I').length;
 }
 

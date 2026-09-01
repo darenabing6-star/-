@@ -110,6 +110,8 @@
   .site-group{display:flex;align-items:center;gap:7px;background:var(--panel);
     border:1px solid var(--border);border-radius:11px;padding:5px 9px;backdrop-filter:blur(6px)}
   .site-group-label{font-size:12.5px;color:var(--text-dim);padding:0 5px;letter-spacing:1px}
+  .site-count{font-family:var(--font-num);font-size:12px;color:var(--gold);padding:1px 8px;border-radius:10px;
+    background:rgba(255,197,61,.1);border:1px solid rgba(255,197,61,.35);margin-left:2px}
   .site-btn{min-width:70px;padding:5px 11px;border-radius:9px;border:1px solid transparent;
     background:rgba(28,58,110,.35);color:var(--text-dim);font-size:13px;cursor:pointer;
     display:flex;flex-direction:column;align-items:center;gap:1px;transition:.2s;font-family:'Microsoft YaHei'}
@@ -504,7 +506,7 @@
   <!-- 站点切换 -->
   <div class="site-bar">
     <div class="site-group" id="domesticGroup"><span class="site-group-label">国内站点</span></div>
-    <div class="site-group" id="intlGroup"><span class="site-group-label">国际站点</span></div>
+    <div class="site-group" id="intlGroup"><span class="site-group-label">国际站点</span><span class="site-count" id="intlCount">--</span></div>
     <div class="site-tip"><span class="pulse-dot"></span>点击地图站点 / 按钮 / 列表可切换 · 手动切换后 10 秒无操作自动恢复轮播</div>
   </div>
 
@@ -577,7 +579,7 @@
     </div>
 
 <div class="panel" style="flex:0 0 232px">
-      <div class="panel-title"><span class="ic"></span>站点航班明细 <span class="extra" id="siteTableCount">--</span></div>
+      <div class="panel-title"><span class="ic"></span>站点航班列表 <span class="extra" id="siteTableCount">--</span></div>
       <div class="panel-body" style="overflow-y:auto">
         <div class="site-table" id="siteTable"></div>
         <div class="st-legend">
@@ -589,7 +591,7 @@
     </div>
 
 <div class="panel" style="flex:1;min-height:0">
-      <div class="panel-title"><span class="ic"></span>CUPPS设备使用统计 · 型号分布 <span class="extra" id="usageSiteName">--</span></div>
+      <div class="panel-title"><span class="ic"></span>CUPPS设备使用 · 型号分布 <span class="extra" id="usageSiteName">--</span></div>
       <div class="panel-body" style="padding:2px 6px 6px">
         <div class="usage-wrap">
           <div id="usageChart"></div>
@@ -598,7 +600,7 @@
     </div>
 
 <div class="panel" style="flex:1;min-height:0">
-      <div class="panel-title"><span class="ic"></span>CUPPS设备使用统计 · 航司分布 <span class="extra" id="allChartTotal">共 -- 次</span></div>
+      <div class="panel-title"><span class="ic"></span>CUPPS设备使用 · 航司分布 <span class="extra" id="allChartTotal">共 -- 次</span></div>
       <div class="panel-body" style="padding:2px 6px 6px">
         <div class="usage-wrap">
           <div id="allChart"></div>
@@ -1374,6 +1376,8 @@ function buildSiteButtons(){
   };
   render(SNAPSHOT.passengers.filter(p => p.areaType === 'D'), $('domesticGroup'));
   render(SNAPSHOT.passengers.filter(p => p.areaType === 'I'), $('intlGroup'));
+  const ic = $('intlCount');
+  if (ic) ic.textContent = SNAPSHOT.passengers.filter(p => p.areaType === 'I').length;
 }
 
 function selectSite(code){

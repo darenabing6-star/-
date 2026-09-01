@@ -104,20 +104,15 @@
   .clock .t{font-family:var(--font-num);font-size:27px;color:#fff;letter-spacing:1px;line-height:1}
   .clock .d{font-size:12px;color:var(--text-dim);margin-top:4px}
 
-  /* ===== 站点切换 ===== */
-  .site-bar{position:absolute;top:104px;left:0;right:0;z-index:25;
-    display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:0 24px}
-  .site-groups-row{display:flex;align-items:center;gap:12px}
-  .site-group{display:flex;align-items:center;gap:6px;background:var(--panel);
-    border:1px solid var(--border);border-radius:10px;padding:3px 7px;backdrop-filter:blur(6px)}
-  .site-group-label{font-size:13px;color:#cfe0ff;padding:0 5px;letter-spacing:1px}
-  .site-counts{display:flex;flex-direction:column;gap:2px;background:var(--panel);border:1px solid var(--border);
-    border-radius:9px;padding:4px 11px;backdrop-filter:blur(6px)}
-  .site-counts .scr{display:flex;align-items:center;justify-content:space-between;gap:16px;line-height:1.15}
-  .site-counts .scr span{font-size:11px;color:var(--text-dim);letter-spacing:1px}
-  .site-counts .scr b{font-family:var(--font-num);font-size:15px;font-weight:bold;color:#ffd75e;
-    text-shadow:0 0 8px rgba(255,197,61,.5)}
-  .site-counts .scr.total b{color:#fff;text-shadow:0 0 8px rgba(0,160,255,.6)}
+  /* ===== 站点切换（分组 + 各自数量在标签下方） ===== */
+  .site-bar{position:absolute;top:108px;left:0;right:0;height:50px;z-index:25;
+    display:flex;align-items:center;gap:12px;padding:0 24px}
+  .site-group{display:flex;align-items:center;gap:8px;background:var(--panel);
+    border:1px solid var(--border);border-radius:11px;padding:3px 8px;backdrop-filter:blur(6px)}
+  .group-head{display:flex;flex-direction:column;align-items:center;gap:1px;padding:0 4px}
+  .site-group-label{font-size:13px;color:#cfe0ff;letter-spacing:1px}
+  .site-count-num{font-family:var(--font-num);font-size:14px;font-weight:bold;color:#ffd75e;line-height:1;
+    text-shadow:0 0 6px rgba(255,197,61,.5)}
   .site-btn{min-width:66px;padding:2px 9px;border-radius:8px;border:1px solid transparent;
     background:rgba(28,58,110,.35);color:var(--text-dim);font-size:13px;cursor:pointer;
     display:flex;flex-direction:column;align-items:center;gap:0;transition:.2s;font-family:'Microsoft YaHei'}
@@ -178,7 +173,7 @@
   .map-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
 
   /* ===== 左右栏（贴底 + 向上延伸到站点栏） ===== */
-  .col{position:absolute;top:228px;bottom:14px;display:flex;flex-direction:column;gap:12px;z-index:15}
+  .col{position:absolute;top:172px;bottom:14px;display:flex;flex-direction:column;gap:12px;z-index:15}
   .col-left{left:24px;width:364px}
   .col-right{right:24px;width:364px}
   .panel{position:relative;background:var(--panel);backdrop-filter:blur(10px);
@@ -509,18 +504,11 @@
     </div>
   </nav>
 
-  <!-- 站点切换（分组左右 + 数量列表在下方） -->
+  <!-- 站点切换（分组 + 各自的站点数量在标签下方） -->
   <div class="site-bar">
-    <div class="site-groups-row">
-      <div class="site-group" id="domesticGroup"><span class="site-group-label">国内站点</span></div>
-      <div class="site-group" id="intlGroup"><span class="site-group-label">国际站点</span></div>
-      <div class="site-tip"><span class="pulse-dot"></span>点击地图站点 / 按钮 / 列表可切换 · 手动切换后 10 秒无操作自动恢复轮播</div>
-    </div>
-    <div class="site-counts" id="siteCounts">
-      <div class="scr"><span>国内站点</span><b id="scDom">--</b></div>
-      <div class="scr"><span>国际站点</span><b id="scIntl">--</b></div>
-      <div class="scr total"><span>站点总数</span><b id="scTotal">--</b></div>
-    </div>
+    <div class="site-group" id="domesticGroup"><span class="group-head"><span class="site-group-label">国内站点</span><span class="site-count-num" id="scDom">--</span></span></div>
+    <div class="site-group" id="intlGroup"><span class="group-head"><span class="site-group-label">国际站点</span><span class="site-count-num" id="scIntl">--</span></span></div>
+    <div class="site-tip"><span class="pulse-dot"></span>点击地图站点 / 按钮 / 列表可切换 · 手动切换后 10 秒无操作自动恢复轮播</div>
   </div>
 
   <!-- 地图信息条：时钟 + 数据时间（近24小时）+ 全屏按钮 -->
@@ -1344,12 +1332,11 @@ function buildSiteButtons(){
   };
   render(SNAPSHOT.passengers.filter(p => p.areaType === 'D'), $('domesticGroup'));
   render(SNAPSHOT.passengers.filter(p => p.areaType === 'I'), $('intlGroup'));
-  const scDom = $('scDom'), scIntl = $('scIntl'), scTotal = $('scTotal');
+  const scDom = $('scDom'), scIntl = $('scIntl');
   const nd = SNAPSHOT.passengers.filter(p => p.areaType === 'D').length;
   const ni = SNAPSHOT.passengers.filter(p => p.areaType === 'I').length;
   if (scDom) scDom.textContent = nd;
   if (scIntl) scIntl.textContent = ni;
-  if (scTotal) scTotal.textContent = nd + ni;
 }
 
 function selectSite(code){

@@ -277,18 +277,38 @@
     background:rgba(10,26,58,.6);padding:3px 9px;border-radius:9px;cursor:pointer;transition:.2s;white-space:nowrap}
   .map-info .range-seg .seg:hover{color:#fff;border-color:rgba(0,160,255,.5)}
   .map-info .range-seg .seg.active{color:var(--gold);border-color:rgba(255,197,61,.5);background:rgba(255,197,61,.12)}
-  /* 自定义日期范围 */
-  .map-info .range-custom{display:none;align-items:center;gap:6px;margin-top:4px;flex-wrap:nowrap}
-  .map-info .range-custom.show{display:flex}
-  .map-info .range-custom input[type=date]{background:rgba(10,26,58,.85);border:1px solid rgba(0,160,255,.4);color:#fff;
-    border-radius:7px;padding:3px 7px;font-size:11px;font-family:var(--font-num);outline:none;color-scheme:dark;width:118px}
-  .map-info .range-custom input[type=date]:hover{border-color:var(--cyan)}
-  .map-info .range-custom input[type=date]:focus{border-color:var(--cyan);box-shadow:0 0 8px rgba(0,160,255,.3)}
-  .map-info .range-custom .rc-sep{color:var(--cyan);font-size:11px;font-weight:bold}
-  .map-info .range-custom .rc-apply{font-size:11px;color:var(--cyan);border:1px solid rgba(0,160,255,.4);
-    background:rgba(0,120,232,.15);padding:3px 10px;border-radius:9px;cursor:pointer;transition:.2s;white-space:nowrap}
-  .map-info .range-custom .rc-apply:hover{color:#fff;background:rgba(0,120,232,.4)}
-  .map-info .range-custom .rc-info{font-size:10px;color:var(--text-dim);white-space:nowrap}
+  /* 自定义日期范围（仿监控平台 Element UI 深色日历） */
+  .map-info .range-custom{display:none;margin-top:5px;position:relative}
+  .map-info .range-custom.show{display:block}
+  .map-info .rc-field{display:flex;align-items:center;gap:7px;background:rgba(10,26,58,.9);border:1px solid rgba(0,160,255,.4);
+    border-radius:6px;padding:5px 10px;cursor:pointer;white-space:nowrap;font-family:var(--font-num)}
+  .map-info .rc-field:hover{border-color:var(--cyan)}
+  .map-info .rc-field .rc-val{font-size:12px;color:#fff}
+  .map-info .rc-field .rc-sep{color:var(--cyan);font-size:11px}
+  .map-info .rc-field .rc-cal{color:#8fa3cc;font-size:12px;margin-left:3px}
+  .map-info .rc-panel{position:absolute;top:calc(100% + 6px);left:0;z-index:60;background:rgba(10,25,41,.98);
+    border:1px solid rgba(0,160,255,.3);border-radius:4px;box-shadow:0 10px 32px rgba(0,0,0,.55);padding:12px 14px;display:none}
+  .map-info .rc-panel.show{display:block}
+  .map-info .rc-months{display:flex;gap:16px}
+  .map-info .rc-month{width:230px}
+  .map-info .rc-mhead{display:flex;align-items:center;justify-content:space-between;font-size:14px;color:#fff;padding:4px 0}
+  .map-info .rc-mnav{background:none;border:none;color:#8fa3cc;cursor:pointer;font-size:15px;padding:2px 6px;border-radius:4px;line-height:1}
+  .map-info .rc-mnav:hover{color:#409eff;background:rgba(64,158,255,.16)}
+  .map-info .rc-mtitle{font-weight:600;letter-spacing:1px}
+  .map-info .rc-week{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;color:#929db3;font-size:12px;padding:7px 0 5px}
+  .map-info .rc-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+  .map-info .rc-day{height:30px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#c3cbdc;
+    border-radius:4px;cursor:pointer;font-family:var(--font-num);transition:background .15s}
+  .map-info .rc-day:hover{background:rgba(64,158,255,.22);color:#fff}
+  .map-info .rc-day.dim{color:#56627a}
+  .map-info .rc-day.today{box-shadow:inset 0 0 0 1px rgba(64,158,255,.55);color:#fff}
+  .map-info .rc-day.in-range{background:rgba(64,158,255,.16);color:#fff}
+  .map-info .rc-day.sel{background:#409eff;color:#fff;font-weight:bold}
+  .map-info .rc-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:10px;padding-top:9px;border-top:1px solid rgba(0,160,255,.18)}
+  .map-info .rc-btn{font-size:12px;padding:4px 14px;border-radius:4px;border:1px solid rgba(0,160,255,.4);background:transparent;color:#c3cbdc;cursor:pointer;transition:.15s}
+  .map-info .rc-btn:hover{border-color:var(--cyan);color:#fff}
+  .map-info .rc-btn.primary{background:#409eff;border-color:#409eff;color:#fff}
+  .map-info .rc-btn.primary:hover{background:#66b1ff}
   .map-info .range-custom .rc-info b{color:var(--gold);font-family:var(--font-num)}
 
   /* 右1 站点设备状态（原监控屏同款：设备总数 + 在线/故障/离线 + 航站楼） */
@@ -505,11 +525,19 @@
         <button class="seg" data-range="custom" onclick="setTimeRange('custom')">自定义</button>
       </div>
       <div class="range-custom" id="rangeCustom">
-        <input type="date" id="startDate" onchange="applyCustomRange()">
-        <span class="rc-sep">至</span>
-        <input type="date" id="endDate" onchange="applyCustomRange()">
-        <button class="rc-apply" onclick="applyCustomRange()">应用</button>
-        <span class="rc-info">共 <b id="rangeDaysInfo">1</b> 天</span>
+        <div class="rc-field" onclick="toggleRcPanel()">
+          <span class="rc-val" id="rcStartText">--</span>
+          <span class="rc-sep">至</span>
+          <span class="rc-val" id="rcEndText">--</span>
+          <span class="rc-cal">▦</span>
+        </div>
+        <div class="rc-panel" id="rcPanel">
+          <div class="rc-months" id="rcMonths"></div>
+          <div class="rc-foot">
+            <button class="rc-btn" onclick="rcClear()">清除</button>
+            <button class="rc-btn primary" onclick="rcConfirm()">确定</button>
+          </div>
+        </div>
       </div>
     </div>
     <div class="mi-sep"></div>
@@ -1551,38 +1579,79 @@ function applyRangeToAll(){
   const info = $('rangeDaysInfo');
   if (info) info.textContent = timeDays();
 }
+/* 自定义日期范围：仿监控平台 Element UI 深色日历 */
+let rcView = null, rcStart = null, rcEnd = null;
+function rcToday(){ const d = new Date(); return { y: d.getFullYear(), m: d.getMonth(), d: d.getDate() }; }
+function rcInitView(){ const a0 = rcStart || new Date(); rcView = { y: a0.getFullYear(), m: a0.getMonth() }; }
+function rcDaysInMonth(y, m){ return new Date(y, m + 1, 0).getDate(); }
+function rcPad(n){ return String(n).padStart(2, '0'); }
+function rcRender(){
+  const mon = $('rcMonths'); if (!mon) return;
+  const t = rcToday(); let html = '';
+  for (let mi = 0; mi < 2; mi++) {
+    const ym = rcView.m + mi, Y = rcView.y + Math.floor(ym / 12), M = ((ym % 12) + 12) % 12;
+    const firstW = new Date(Y, M, 1).getDay(), dim = rcDaysInMonth(Y, M);
+    let days = '';
+    for (let i = 0; i < firstW; i++) days += '<span class="rc-day dim"></span>';
+    for (let d = 1; d <= dim; d++) {
+      const dt = new Date(Y, M, d); let cls = 'rc-day';
+      if (dt.getTime() < new Date(t.y, t.m, t.d).getTime()) cls += ' dim';
+      if (dt.getTime() === new Date(t.y, t.m, t.d).getTime()) cls += ' today';
+      if (rcStart && dt.getTime() === rcStart.getTime()) cls += ' sel';
+      if (rcEnd && dt.getTime() === rcEnd.getTime()) cls += ' sel';
+      if (rcStart && rcEnd && dt > rcStart && dt < rcEnd) cls += ' in-range';
+      days += '<span class="' + cls + '" onclick="rcPick(' + Y + ',' + M + ',' + d + ')">' + d + '</span>';
+    }
+    const navL = mi === 0 ? '<button class="rc-mnav" onclick="rcNav(-1,0)">«</button><button class="rc-mnav" onclick="rcNav(0,-1)">‹</button>' : '<span></span>';
+    const navR = mi === 0 ? '<button class="rc-mnav" onclick="rcNav(0,1)">›</button><button class="rc-mnav" onclick="rcNav(1,0)">»</button>' : '<span></span>';
+    html += '<div class="rc-month"><div class="rc-mhead">' + navL + '<span class="rc-mtitle">' + Y + '年' + (M + 1) + '月</span>' + navR + '</div>' +
+      '<div class="rc-week">' + ['日','一','二','三','四','五','六'].map(function(w){ return '<span>' + w + '</span>'; }).join('') + '</div>' +
+      '<div class="rc-days">' + days + '</div></div>';
+  }
+  mon.innerHTML = html;
+}
+function rcNav(dy, dm){ rcView = { y: rcView.y + dy, m: rcView.m + dm }; rcRender(); }
+function rcPick(y, m, d){
+  const dt = new Date(y, m, d);
+  if (!rcStart || (rcStart && rcEnd)) { rcStart = dt; rcEnd = null; }
+  else { if (dt < rcStart) { rcEnd = rcStart; rcStart = dt; } else rcEnd = dt; }
+  rcRender();
+}
+function rcConfirm(){
+  if (!rcStart || !rcEnd) return;
+  const ds = function(x){ return x.getFullYear() + '-' + rcPad(x.getMonth() + 1) + '-' + rcPad(x.getDate()); };
+  rangeStart = ds(rcStart); rangeEnd = ds(rcEnd);
+  const s = $('rcStartText'), e = $('rcEndText');
+  if (s) s.textContent = rangeStart.replace(/-/g, '/');
+  if (e) e.textContent = rangeEnd.replace(/-/g, '/');
+  rcPanelHide();
+  timeRange = 'custom';
+  document.querySelectorAll('#rangeSeg .seg').forEach(function(b){ b.classList.toggle('active', b.dataset.range === 'custom'); });
+  applyRangeToAll();
+}
+function rcClear(){ rcStart = null; rcEnd = null; rcRender(); }
+function rcPanelHide(){ const p0 = $('rcPanel'); if (p0) p0.classList.remove('show'); }
+function rcPanelShow(){ const p0 = $('rcPanel'); if (!p0) return; rcInitView(); rcRender(); p0.classList.add('show'); }
+function toggleRcPanel(){ const p0 = $('rcPanel'); if (p0.classList.contains('show')) rcPanelHide(); else rcPanelShow(); }
 function setTimeRange(r){
   timeRange = r;
-  document.querySelectorAll('#rangeSeg .seg').forEach(b => b.classList.toggle('active', b.dataset.range === r));
-  const rc = $('rangeCustom');
-  if (rc) rc.classList.toggle('show', r === 'custom');
+  document.querySelectorAll('#rangeSeg .seg').forEach(function(b){ b.classList.toggle('active', b.dataset.range === r); });
+  const rc = $('rangeCustom'); if (rc) rc.classList.toggle('show', r === 'custom');
   if (r === 'custom') {
-    // 首次进入自定义：默认填充近 7 天
     if (!rangeStart || !rangeEnd) {
       const end = new Date(), start = new Date(end.getTime() - 6 * 86400000);
-      const ds = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      const ds = function(x){ return x.getFullYear() + '-' + rcPad(x.getMonth() + 1) + '-' + rcPad(x.getDate()); };
       rangeStart = ds(start); rangeEnd = ds(end);
-      const sEl = $('startDate'), eEl = $('endDate');
-      if (sEl) sEl.value = rangeStart;
-      if (eEl) eEl.value = rangeEnd;
     }
+    rcStart = new Date(rangeStart + 'T00:00:00'); rcEnd = new Date(rangeEnd + 'T00:00:00');
+    const s = $('rcStartText'), e = $('rcEndText');
+    if (s) s.textContent = rangeStart.replace(/-/g, '/');
+    if (e) e.textContent = rangeEnd.replace(/-/g, '/');
+    rcPanelShow();
   }
   applyRangeToAll();
 }
-function applyCustomRange(){
-  const sEl = $('startDate'), eEl = $('endDate');
-  if (!sEl || !eEl) return;
-  const s = sEl.value, e = eEl.value;
-  if (!s || !e) return;
-  if (e < s) { alert('结束时间不能早于开始时间'); return; }
-  rangeStart = s; rangeEnd = e;
-  timeRange = 'custom';
-  document.querySelectorAll('#rangeSeg .seg').forEach(b => b.classList.toggle('active', b.dataset.range === 'custom'));
-  const rc = $('rangeCustom');
-  if (rc) rc.classList.add('show');
-  applyRangeToAll();
-}
-function pct(a, b){ return b > 0 ? Math.round(a/b*100) + '%' : '0%'; }
+function applyCustomRange(){ rcConfirm(); }function pct(a, b){ return b > 0 ? Math.round(a/b*100) + '%' : '0%'; }
 function renderDots(id, total, on, off, fault){
   const el = $(id);
   if (!el) return;
